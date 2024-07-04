@@ -4,10 +4,10 @@ import styles from './AuthNav.module.css';
 const AuthNav = () => {
   return (
     <nav>
-      <NavLink to="/register" exact className={styles.link} activeClassName={styles.activeLink}>
+      <NavLink to="/register" className={styles.link}>
         Register
       </NavLink>
-      <NavLink to="/login" className={styles.link} activeClassName={styles.activeLink}>
+      <NavLink to="/login" className={styles.link}>
         Login
       </NavLink>
     </nav>

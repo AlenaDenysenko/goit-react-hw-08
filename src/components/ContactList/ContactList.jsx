@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { deleteContact } from '../../redux/contacts/contactsOps';
-
-import { selectFilteredContacts } from '../../redux/contacts/selectors';
+import { selectFilteredContacts } from '../../redux/filters/selectors';
 
 const ContactList = () => {
   const dispatch = useDispatch();
@@ -24,4 +23,3 @@ const ContactList = () => {
 };
 
 export default ContactList;
-
