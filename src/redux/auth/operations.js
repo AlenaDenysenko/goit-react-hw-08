@@ -3,13 +3,19 @@ import axios from 'axios';
 
 axios.defaults.baseURL = 'https://connections-api.herokuapp.com';
 
-const setAuthToken = token => {
-  if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  } else {
-    delete axios.defaults.headers.common['Authorization'];
+
+axios.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  error => {
+    return Promise.reject(error);
   }
-};
+);
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -28,9 +34,7 @@ export const login = createAsyncThunk(
   async (credentials, thunkAPI) => {
     try {
       const response = await axios.post('/users/login', credentials);
-      const token = response.data.token;
-      localStorage.setItem('token', token);
-      setAuthToken(token);
+      localStorage.setItem('token', response.data.token);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -44,7 +48,6 @@ export const logout = createAsyncThunk(
     try {
       await axios.post('/users/logout');
       localStorage.removeItem('token');
-      setAuthToken(null);
       return;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -53,20 +56,54 @@ export const logout = createAsyncThunk(
 );
 
 export const refreshUser = createAsyncThunk(
-  'auth/refreshUser',
+  'auth/refresh',
   async (_, thunkAPI) => {
     const state = thunkAPI.getState();
     const persistedToken = state.auth.token;
 
     if (!persistedToken) {
-      return thunkAPI.rejectWithValue('Token is not available');
+      return thunkAPI.rejectWithValue('No token available');
     }
-
-    setAuthToken(persistedToken);
 
     try {
       const response = await axios.get('/users/current');
       return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const fetchContacts = createAsyncThunk(
+  'contacts/fetchAll',
+  async (_, thunkAPI) => {
+    try {
+      const response = await axios.get('/contacts');
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const addContact = createAsyncThunk(
+  'contacts/addContact',
+  async (contact, thunkAPI) => {
+    try {
+      const response = await axios.post('/contacts', contact);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const deleteContact = createAsyncThunk(
+  'contacts/deleteContact',
+  async (contactId, thunkAPI) => {
+    try {
+      await axios.delete(`/contacts/${contactId}`);
+      return contactId;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }

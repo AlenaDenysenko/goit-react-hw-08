@@ -3,7 +3,6 @@ import axios from 'axios';
 
 axios.defaults.baseURL = 'https://connections-api.herokuapp.com';
 
-
 const setAuthToken = token => {
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -89,8 +88,8 @@ export const logout = createAsyncThunk(
 
     try {
       await axios.post('/users/logout');
-      localStorage.removeItem('token'); 
-      setAuthToken(null); 
+      localStorage.removeItem('token'); // Очистити токен з localStorage
+      setAuthToken(null); // Видалити токен з заголовків Axios
       return;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -98,7 +97,7 @@ export const logout = createAsyncThunk(
   }
 );
 
-export const refreshUser = createAsyncThunk(
+export const refresh = createAsyncThunk(
   'auth/refresh',
   async (_, thunkAPI) => {
     const state = thunkAPI.getState();
@@ -118,3 +117,4 @@ export const refreshUser = createAsyncThunk(
     }
   }
 );
+
