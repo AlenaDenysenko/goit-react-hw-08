@@ -1,10 +1,10 @@
+// src/redux/auth/operations.js
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 axios.defaults.baseURL = 'https://connections-api.herokuapp.com';
 
-
-export const setAuthToken = token => {
+export const setAuthToken = (token) => {
   if (token) {
     axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
   } else {
@@ -12,24 +12,13 @@ export const setAuthToken = token => {
   }
 };
 
-axios.interceptors.request.use(
-  config => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  error => Promise.reject(error)
-);
-
 export const register = createAsyncThunk(
   'auth/register',
   async (credentials, thunkAPI) => {
     try {
       const response = await axios.post('/users/signup', credentials);
       localStorage.setItem('token', response.data.token);
-      setAuthToken(response.data.token); 
+      setAuthToken(response.data.token);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -43,7 +32,7 @@ export const login = createAsyncThunk(
     try {
       const response = await axios.post('/users/login', credentials);
       localStorage.setItem('token', response.data.token);
-      setAuthToken(response.data.token); 
+      setAuthToken(response.data.token);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
@@ -57,7 +46,7 @@ export const logout = createAsyncThunk(
     try {
       await axios.post('/users/logout');
       localStorage.removeItem('token');
-      setAuthToken(null); 
+      setAuthToken(null);
       return;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);

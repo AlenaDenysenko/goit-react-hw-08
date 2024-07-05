@@ -1,12 +1,19 @@
+// src/main.jsx
 import ReactDOM from 'react-dom/client'; 
 import { Provider } from 'react-redux';
-import store from './redux/store'; 
+import { PersistGate } from 'redux-persist/integration/react';
+import { BrowserRouter } from 'react-router-dom';
+import store, { persistor } from './redux/store'; // змінено імпорт
 import App from './App';
 import './index.css'; 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <Provider store={store}>
-    <App />
+    <PersistGate loading={null} persistor={persistor}>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </PersistGate>
   </Provider>
 );

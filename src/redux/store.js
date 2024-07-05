@@ -1,19 +1,27 @@
+//src\redux\store.js
+
 import { configureStore } from '@reduxjs/toolkit';
-import rootReducer from './rootReducer';
 import { persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+import authReducer from './auth/authSlice'; 
+import contactsReducer from './contacts/contactsSlice'; 
+import filtersReducer from './filters/filtersSlice'; 
 
-const persistConfig = {
-  key: 'root',
+const authPersistConfig = {
+  key: 'auth',
   storage,
-  whitelist: ['auth'],
+  whitelist: ['token'],
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const rootReducer = {
+  auth: persistReducer(authPersistConfig, authReducer),
+  contacts: contactsReducer,
+  filters: filtersReducer,
+};
 
 const store = configureStore({
-  reducer: persistedReducer,
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
