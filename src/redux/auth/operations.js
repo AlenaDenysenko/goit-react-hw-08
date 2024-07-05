@@ -3,7 +3,6 @@ import axios from 'axios';
 
 axios.defaults.baseURL = 'https://connections-api.herokuapp.com';
 
-
 axios.interceptors.request.use(
   config => {
     const token = localStorage.getItem('token');
@@ -12,9 +11,7 @@ axios.interceptors.request.use(
     }
     return config;
   },
-  error => {
-    return Promise.reject(error);
-  }
+  error => Promise.reject(error)
 );
 
 export const register = createAsyncThunk(
@@ -22,6 +19,7 @@ export const register = createAsyncThunk(
   async (credentials, thunkAPI) => {
     try {
       const response = await axios.post('/users/signup', credentials);
+      localStorage.setItem('token', response.data.token);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
