@@ -1,5 +1,4 @@
-// src/components/LoadingSpinner/LoadingSpinner.jsx
-import './LoadingSpinner.module.css'; // Приклад імпорту стилів
+import './LoadingSpinner.module.css'; 
 
 const LoadingSpinner = () => {
   return (
